@@ -1,66 +1,15 @@
 import { useState, useEffect, useRef } from "react";
+import AdminLogin from "./components/AdminLogin.jsx";
+import AdminDashboard from "./components/AdminDashboard.jsx";
+import { loadData } from "./data.js";
 
+// ── COLORS ──
 const COLORS = {
   bg: "#07070d", bg2: "#0e0e18", bg3: "#141420", bg4: "#1a1a28",
   border: "rgba(255,255,255,0.07)", border2: "rgba(255,255,255,0.13)",
   text: "#edeaf8", muted: "#7b7896", muted2: "#a09cbd",
   accent: "#6c5ce7", accent2: "#a29bf5", accent3: "#d1ccff",
   teal: "#00d9a3", card: "#0f0f1c", card2: "#161625", danger: "#ff4757",
-};
-
-const DATA = {
-  hero: {
-    name: "Venkatesh Raavi", role: "Developer",
-    tagline: "Building scalable, user-friendly software",
-    desc: "Hi, I'm Venkatesh Raavi — a passionate developer with a strong foundation in React Native and Java. I build scalable, user-friendly applications and solve real-world problems through code.",
-    photo: "https://raavivenkatesh.netlify.app/images/Photo .png",
-    github: "https://github.com/Raavi7965",
-    linkedin: "https://www.linkedin.com/in/raavivenkatesh/",
-    email: "venkiravi796@gmail.com",
-    s1n: "5+", s1l: "Certifications", s2n: "2+", s2l: "Projects Built",
-    s3n: "9+", s3l: "Technologies",
-    avail: "Available for Opportunities", availsub: "Full-Time · Fresher · Available Now",
-  },
-  skills: [
-    { ico: "🌐", name: "HTML5", pct: 90 }, { ico: "⚡", name: "JavaScript", pct: 80 },
-    { ico: "⚛️", name: "React.js", pct: 82 }, { ico: "🐍", name: "Python", pct: 70 },
-    { ico: "☕", name: "Java", pct: 78 }, { ico: "🗄️", name: "MySQL", pct: 72 },
-    { ico: "🍃", name: "MongoDB", pct: 68 }, { ico: "🔧", name: "Git", pct: 80 },
-    { ico: "☁️", name: "AWS", pct: 62 },
-  ],
-  exp: [{
-    logoText: "FI", company: "Futur Interns · IT Services", role: "Java Full Stack Intern",
-    period: "July 2025 – August 2025", type: "Remote",
-    bullets: [
-      "Built scalable web applications using Java Full Stack technologies.",
-      "Developed frontend interfaces with React.js and backend services in Java.",
-      "Presented project results to leadership and received positive feedback.",
-    ],
-  }],
-  projects: [
-    { num: "01", title: "TripTrek", desc: "A responsive TripTrek Home Page replica featuring post feeds, AllTours, MyBookings, Contribute, and Group Adventure Planning.", img: "https://raavivenkatesh.netlify.app/images/S1.jpeg", tags: "React.js, Responsive Design, UI/UX" },
-    { num: "02", title: "AllTours Forum", desc: "A fully responsive and interactive Forum UI screen. Browse, search, post questions, add answers, and like/dislike answers.", img: "https://raavivenkatesh.netlify.app/images/S2.jpeg", tags: "React.js, Real-time Search, Forum UI" },
-  ],
-  certs: [
-    { name: "AWS Cloud Practitioner", issuer: "Amazon Web Services", img: "https://raavivenkatesh.netlify.app/images/AWS.png" },
-    { name: "Full Stack Web Development", issuer: "Certified Program", img: "https://raavivenkatesh.netlify.app/images/fullstack.png" },
-    { name: "Data Science Professional", issuer: "IBM", img: "https://raavivenkatesh.netlify.app/images/IBM.png" },
-    { name: "Programming in Java", issuer: "NPTEL", img: "https://raavivenkatesh.netlify.app/images/NPTEL.png" },
-    { name: "Certified Software Programmer", issuer: "Infosys", img: "https://raavivenkatesh.netlify.app/images/Infosys.png" },
-  ],
-  edu: [
-    { year: "2026", degree: "B.Tech in Data Science", school: "Malla Reddy University", desc: "Focused on programming, data analysis, and software development." },
-    { year: "2022", degree: "Class 12 — MPC", school: "Sri Chaitanya", desc: "Built strong interest in computing through Mathematics, Physics, and Chemistry." },
-    { year: "2020", degree: "Class 10", school: "Universal High School", desc: "Developed problem-solving mindset and core academic foundation." },
-  ],
-  about: {
-    bio1: "I am Venkatesh Raavi, a 22-year-old Full Stack Developer from Ongole, Andhra Pradesh, India.",
-    bio2: "My expertise spans React.js for frontend, Java for backend services, and cloud deployment on AWS.",
-    bio3: "Currently open to full-time opportunities. I bring a fresher's energy with a professional commitment to quality.",
-    city: "Ongole, AP", age: "22 Years", gender: "Male", nationality: "Indian",
-    langs: "Telugu, English, Hindi", explevel: "Fresher", availability: "Full-Time ✓", phone: "+91 9110353818",
-  },
-  contact: { phone: "+91 9110353818", email: "venkiravi796@gmail.com", address: "Inkollu, Bapatala, Andhra Pradesh", status: "Available for Work" },
 };
 
 // ── HOOKS ──
@@ -70,7 +19,10 @@ function useInView(threshold = 0.1) {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setInView(true); }, { threshold, rootMargin: "0px 0px -40px 0px" });
+    const obs = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) setInView(true); },
+      { threshold, rootMargin: "0px 0px -40px 0px" }
+    );
     obs.observe(el);
     return () => obs.disconnect();
   }, [threshold]);
@@ -85,9 +37,7 @@ function Reveal({ children, delay = 0, style = {} }) {
       transform: inView ? "translateY(0)" : "translateY(28px)",
       transition: `opacity 0.6s ease ${delay}ms, transform 0.6s ease ${delay}ms`,
       ...style,
-    }}>
-      {children}
-    </div>
+    }}>{children}</div>
   );
 }
 
@@ -111,12 +61,12 @@ const MailIcon = () => (
 );
 
 // ── NAV ──
-function Nav() {
+function Nav({ onAdminClick }) {
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
+    const fn = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", fn);
+    return () => window.removeEventListener("scroll", fn);
   }, []);
   const scroll = (id) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   return (
@@ -139,8 +89,7 @@ function Nav() {
             <button onClick={() => scroll(s)} style={{
               background: "none", border: "none", color: COLORS.muted, fontSize: "0.82rem",
               fontWeight: 500, cursor: "pointer", letterSpacing: "0.05em", textTransform: "uppercase",
-              fontFamily: "'Cabinet Grotesk', sans-serif", transition: "color 0.2s",
-              padding: 0,
+              fontFamily: "'Cabinet Grotesk', sans-serif", transition: "color 0.2s", padding: 0,
             }}
               onMouseEnter={e => e.target.style.color = COLORS.text}
               onMouseLeave={e => e.target.style.color = COLORS.muted}>
@@ -149,21 +98,32 @@ function Nav() {
           </li>
         ))}
       </ul>
-      <a href={`mailto:${DATA.hero.email}`} style={{
-        background: COLORS.accent, color: "#fff", padding: "0.45rem 1.2rem",
-        borderRadius: "6px", fontSize: "0.85rem", fontWeight: 500, textDecoration: "none",
-        fontFamily: "'Cabinet Grotesk', sans-serif", transition: "all 0.2s",
-      }}
-        onMouseEnter={e => { e.target.style.background = "#5a4dd6"; e.target.style.transform = "translateY(-1px)"; }}
-        onMouseLeave={e => { e.target.style.background = COLORS.accent; e.target.style.transform = "none"; }}>
-        Hire Me
-      </a>
+      <div style={{ display: "flex", gap: "0.6rem" }}>
+        <button onClick={onAdminClick} style={{
+          background: "transparent", border: `0.5px solid ${COLORS.border2}`, color: COLORS.muted2,
+          padding: "0.4rem 0.9rem", borderRadius: "6px", fontSize: "0.78rem", cursor: "pointer",
+          fontFamily: "'Cabinet Grotesk', sans-serif", transition: "all 0.2s",
+        }}
+          onMouseEnter={e => { e.target.style.borderColor = COLORS.accent; e.target.style.color = COLORS.accent2; }}
+          onMouseLeave={e => { e.target.style.borderColor = COLORS.border2; e.target.style.color = COLORS.muted2; }}>
+          ⚙ Admin
+        </button>
+        <a href={`mailto:${""}`} style={{
+          background: COLORS.accent, color: "#fff", padding: "0.45rem 1.2rem",
+          borderRadius: "6px", fontSize: "0.85rem", fontWeight: 500, textDecoration: "none",
+          fontFamily: "'Cabinet Grotesk', sans-serif", transition: "all 0.2s",
+        }}
+          onMouseEnter={e => { e.target.style.background = "#5a4dd6"; e.target.style.transform = "translateY(-1px)"; }}
+          onMouseLeave={e => { e.target.style.background = COLORS.accent; e.target.style.transform = "none"; }}>
+          Hire Me
+        </a>
+      </div>
     </nav>
   );
 }
 
 // ── HERO ──
-function Hero() {
+function Hero({ DATA }) {
   const h = DATA.hero;
   return (
     <section style={{
@@ -176,7 +136,6 @@ function Hero() {
         background: "radial-gradient(ellipse 55% 60% at 75% 45%,rgba(108,92,231,.14) 0%,transparent 65%), radial-gradient(ellipse 40% 40% at 15% 75%,rgba(0,217,163,.07) 0%,transparent 55%)",
       }} />
       <div style={{ display: "grid", gridTemplateColumns: "1fr 420px", gap: "5rem", alignItems: "center", maxWidth: "1200px", margin: "0 auto", width: "100%", position: "relative", zIndex: 1 }}>
-        {/* LEFT */}
         <div>
           <div style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", background: "rgba(0,217,163,0.08)", border: "0.5px solid rgba(0,217,163,0.25)", borderRadius: "100px", padding: "0.3rem 1rem", fontSize: "0.77rem", color: COLORS.teal, marginBottom: "1.5rem", letterSpacing: "0.04em" }}>
             <span style={{ width: 7, height: 7, borderRadius: "50%", background: COLORS.teal, animation: "breathe 2.5s ease infinite", display: "inline-block" }} />
@@ -206,7 +165,6 @@ function Hero() {
             ))}
           </div>
         </div>
-        {/* RIGHT */}
         <div style={{ display: "flex", flexDirection: "column", gap: "1.2rem" }}>
           <div style={{ borderRadius: "24px", border: `0.5px solid ${COLORS.border2}`, overflow: "hidden", background: COLORS.card2, aspectRatio: "4/5", position: "relative" }}>
             <img src={h.photo} alt={h.name} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block" }}
@@ -246,23 +204,6 @@ function SectionHeader({ tag, title, sub }) {
 }
 
 // ── SKILLS ──
-function Skills() {
-  return (
-    <section id="skills" style={{ padding: "6rem 5rem", background: COLORS.bg2, fontFamily: "'Cabinet Grotesk', sans-serif" }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-        <SectionHeader tag="What I work with" title="Technical Skills" sub="Technologies I use to bring ideas to life — from modern frontends to robust backends and cloud infrastructure." />
-        <Reveal delay={300}>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(140px,1fr))", gap: "1rem" }}>
-            {DATA.skills.map((sk, i) => (
-              <SkillCard key={sk.name} sk={sk} />
-            ))}
-          </div>
-        </Reveal>
-      </div>
-    </section>
-  );
-}
-
 function SkillCard({ sk }) {
   const [hov, setHov] = useState(false);
   return (
@@ -273,34 +214,52 @@ function SkillCard({ sk }) {
       transition: "all 0.3s", transform: hov ? "translateY(-4px)" : "none",
     }}>
       <span style={{ fontSize: "2.2rem", marginBottom: "0.6rem", display: "block" }}>{sk.ico}</span>
-      <div style={{ fontSize: "0.87rem", fontWeight: 600, marginBottom: "0.7rem" }}>{sk.name}</div>
-      <div style={{ width: "100%", height: 3, background: "rgba(255,255,255,0.07)", borderRadius: 2, overflow: "hidden" }}>
-        <div style={{ height: "100%", width: `${sk.pct}%`, background: `linear-gradient(90deg,${COLORS.accent},${COLORS.teal})`, borderRadius: 2 }} />
+      <p style={{ fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.7rem", color: COLORS.text }}>{sk.name}</p>
+      <div style={{ height: 4, background: COLORS.bg4, borderRadius: 2 }}>
+        <div style={{ height: "100%", width: `${sk.pct}%`, background: `linear-gradient(90deg,${COLORS.accent},${COLORS.accent2})`, borderRadius: 2, transition: "width 1s ease" }} />
       </div>
+      <p style={{ fontSize: "0.72rem", color: COLORS.muted, marginTop: "0.4rem" }}>{sk.pct}%</p>
     </div>
   );
 }
 
+function Skills({ DATA }) {
+  return (
+    <section id="skills" style={{ padding: "6rem 5rem", background: COLORS.bg2, fontFamily: "'Cabinet Grotesk', sans-serif" }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+        <SectionHeader tag="What I work with" title="Technical Skills" sub="Technologies I use to bring ideas to life — from modern frontends to robust backends and cloud infrastructure." />
+        <Reveal delay={300}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(140px,1fr))", gap: "1rem" }}>
+            {DATA.skills.map(sk => <SkillCard key={sk.name} sk={sk} />)}
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
 // ── EXPERIENCE ──
-function Experience() {
+function Experience({ DATA }) {
   return (
     <section id="experience" style={{ padding: "6rem 5rem", background: COLORS.bg, fontFamily: "'Cabinet Grotesk', sans-serif" }}>
       <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-        <SectionHeader tag="Work History" title="Experience" sub="My professional journey building real-world applications and growing through hands-on experience." />
+        <SectionHeader tag="Work History" title="Experience" sub="Professional experience building real-world applications and delivering meaningful outcomes." />
         <Reveal delay={300}>
           <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
             {DATA.exp.map((e, i) => (
-              <div key={i} style={{ background: COLORS.card, border: `0.5px solid ${COLORS.border}`, borderRadius: "18px", padding: "2rem", display: "grid", gridTemplateColumns: "64px 1fr", gap: "1.5rem" }}>
-                <div style={{ width: 64, height: 64, borderRadius: "14px", border: `0.5px solid ${COLORS.border2}`, background: COLORS.card2, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Syne', sans-serif", fontSize: "1rem", fontWeight: 800, color: COLORS.accent2, flexShrink: 0 }}>
+              <div key={i} style={{ background: COLORS.card, border: `0.5px solid ${COLORS.border}`, borderRadius: "18px", padding: "2rem", display: "flex", gap: "1.5rem" }}>
+                <div style={{ width: 52, height: 52, borderRadius: "12px", background: `linear-gradient(135deg,${COLORS.accent},${COLORS.accent2})`, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Syne', sans-serif", fontSize: "1rem", fontWeight: 800, color: "#fff", flexShrink: 0 }}>
                   {e.logoText}
                 </div>
-                <div>
-                  <div style={{ fontSize: "0.8rem", color: COLORS.accent2, fontWeight: 600, marginBottom: "0.2rem" }}>{e.company}</div>
-                  <div style={{ fontFamily: "'Syne', sans-serif", fontSize: "1.2rem", fontWeight: 700, marginBottom: "0.35rem" }}>{e.role}</div>
-                  <div style={{ display: "flex", gap: "0.8rem", fontSize: "0.8rem", color: COLORS.muted, marginBottom: "0.9rem", flexWrap: "wrap", alignItems: "center" }}>
-                    <span>{e.period}</span>
-                    <span style={{ background: "rgba(108,92,231,0.1)", border: "0.5px solid rgba(108,92,231,0.25)", borderRadius: 4, padding: "0.14rem 0.6rem", fontSize: "0.74rem", color: COLORS.accent3 }}>{e.type}</span>
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem", marginBottom: "0.3rem" }}>
+                    <span style={{ fontFamily: "'Syne', sans-serif", fontSize: "1.1rem", fontWeight: 700 }}>{e.role}</span>
+                    <div style={{ display: "flex", gap: "0.5rem" }}>
+                      <span style={{ background: "rgba(108,92,231,0.1)", border: "0.5px solid rgba(108,92,231,0.2)", borderRadius: "100px", padding: "0.2rem 0.7rem", fontSize: "0.75rem", color: COLORS.accent2 }}>{e.type}</span>
+                    </div>
                   </div>
+                  <p style={{ color: COLORS.accent2, fontSize: "0.9rem", marginBottom: "0.3rem" }}>{e.company}</p>
+                  <p style={{ color: COLORS.muted, fontSize: "0.8rem", marginBottom: "1rem" }}>{e.period}</p>
                   <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
                     {e.bullets.map((b, j) => (
                       <li key={j} style={{ fontSize: "0.9rem", color: COLORS.muted2, padding: "0.25rem 0 0.25rem 1.3rem", position: "relative" }}>
@@ -319,33 +278,152 @@ function Experience() {
   );
 }
 
-// ── PROJECTS ──
-function Projects() {
+// ── LIGHTBOX ──
+function Lightbox({ item, type, onClose, onPrev, onNext, hasPrev, hasNext }) {
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowLeft" && hasPrev) onPrev();
+      if (e.key === "ArrowRight" && hasNext) onNext();
+    };
+    window.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = ""; };
+  }, [onClose, onPrev, onNext, hasPrev, hasNext]);
+
+  if (!item) return null;
+  const imgSrc = item.img;
+  const title = type === "project" ? item.title : item.name;
+  const subtitle = type === "project" ? item.tags : item.issuer;
+  const desc = type === "project" ? item.desc : null;
+
   return (
-    <section id="projects" style={{ padding: "6rem 5rem", background: COLORS.bg2, fontFamily: "'Cabinet Grotesk', sans-serif" }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-        <SectionHeader tag="What I've Built" title="Latest Projects" sub="Projects that showcase my ability to design and build complete, polished web applications." />
-        <Reveal delay={300}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
-            {DATA.projects.map((p, i) => <ProjectCard key={i} p={p} />)}
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed", inset: 0, zIndex: 9999,
+        background: "rgba(0,0,0,0.88)", backdropFilter: "blur(12px)",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        padding: "1.5rem", animation: "lbIn 0.22s ease",
+      }}
+    >
+      <style>{`@keyframes lbIn{from{opacity:0;transform:scale(0.96)}to{opacity:1;transform:scale(1)}}`}</style>
+
+      {/* Close */}
+      <button onClick={onClose} style={{
+        position: "fixed", top: "1.2rem", right: "1.5rem",
+        background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)",
+        color: "#fff", width: 40, height: 40, borderRadius: "50%",
+        fontSize: "1.2rem", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+        zIndex: 10000,
+      }}>✕</button>
+
+      {/* Prev */}
+      {hasPrev && (
+        <button onClick={e => { e.stopPropagation(); onPrev(); }} style={{
+          position: "fixed", left: "1.2rem", top: "50%", transform: "translateY(-50%)",
+          background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)",
+          color: "#fff", width: 44, height: 44, borderRadius: "50%",
+          fontSize: "1.3rem", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+          zIndex: 10000,
+        }}>‹</button>
+      )}
+
+      {/* Next */}
+      {hasNext && (
+        <button onClick={e => { e.stopPropagation(); onNext(); }} style={{
+          position: "fixed", right: "1.2rem", top: "50%", transform: "translateY(-50%)",
+          background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)",
+          color: "#fff", width: 44, height: 44, borderRadius: "50%",
+          fontSize: "1.3rem", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+          zIndex: 10000,
+        }}>›</button>
+      )}
+
+      {/* Modal */}
+      <div
+        onClick={e => e.stopPropagation()}
+        style={{
+          background: COLORS.card, border: `1px solid ${COLORS.border2}`,
+          borderRadius: "20px", overflow: "hidden",
+          maxWidth: type === "project" ? 780 : 640, width: "100%",
+          maxHeight: "90vh", display: "flex", flexDirection: "column",
+        }}
+      >
+        {/* Image */}
+        <div style={{ background: COLORS.card2, position: "relative", overflow: "hidden" }}>
+          {imgSrc ? (
+            <img
+              src={imgSrc} alt={title}
+              style={{ width: "100%", maxHeight: type === "project" ? 420 : 480, objectFit: "contain", display: "block" }}
+              onError={e => { e.target.style.display = "none"; }}
+            />
+          ) : (
+            <div style={{ height: 200, display: "flex", alignItems: "center", justifyContent: "center", color: COLORS.muted, fontSize: "0.9rem" }}>
+              No image available
+            </div>
+          )}
+          {/* Zoom hint */}
+          <div style={{
+            position: "absolute", bottom: "0.8rem", right: "0.8rem",
+            background: "rgba(0,0,0,0.55)", border: "1px solid rgba(255,255,255,0.12)",
+            borderRadius: "6px", padding: "0.25rem 0.6rem",
+            fontSize: "0.72rem", color: "rgba(255,255,255,0.7)",
+          }}>🔍 Full view</div>
+        </div>
+
+        {/* Info */}
+        <div style={{ padding: "1.4rem 1.6rem", overflowY: "auto" }}>
+          {type === "project" && (
+            <div style={{ fontSize: "0.68rem", color: COLORS.accent, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: "0.3rem" }}>{item.num}</div>
+          )}
+          <h3 style={{ fontFamily: "'Syne', sans-serif", fontSize: "1.3rem", fontWeight: 800, marginBottom: "0.4rem" }}>{title}</h3>
+          {desc && <p style={{ fontSize: "0.9rem", color: COLORS.muted2, lineHeight: 1.7, marginBottom: "0.9rem" }}>{desc}</p>}
+          <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
+            {subtitle && subtitle.split(",").map(t => (
+              <span key={t} style={{
+                background: type === "project" ? "rgba(108,92,231,0.1)" : "rgba(0,217,163,0.08)",
+                border: type === "project" ? "0.5px solid rgba(108,92,231,0.25)" : "0.5px solid rgba(0,217,163,0.25)",
+                borderRadius: "4px", padding: "0.2rem 0.65rem",
+                fontSize: "0.75rem",
+                color: type === "project" ? COLORS.accent3 : COLORS.teal,
+              }}>{t.trim()}</span>
+            ))}
           </div>
-        </Reveal>
+        </div>
       </div>
-    </section>
+    </div>
   );
 }
 
-function ProjectCard({ p }) {
+// ── PROJECTS ──
+function ProjectCard({ p, onClick }) {
   const [hov, setHov] = useState(false);
   return (
-    <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} style={{
-      background: COLORS.card, border: `0.5px solid ${hov ? COLORS.border2 : COLORS.border}`,
-      borderRadius: "18px", overflow: "hidden", transition: "all 0.3s",
-      transform: hov ? "translateY(-5px)" : "none",
-    }}>
-      <div style={{ height: 210, overflow: "hidden", background: COLORS.card2 }}>
+    <div
+      onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+      onClick={onClick}
+      style={{
+        background: COLORS.card, border: `0.5px solid ${hov ? COLORS.border2 : COLORS.border}`,
+        borderRadius: "18px", overflow: "hidden", transition: "all 0.3s",
+        transform: hov ? "translateY(-5px)" : "none",
+        cursor: "pointer",
+      }}
+    >
+      <div style={{ height: 210, overflow: "hidden", background: COLORS.card2, position: "relative" }}>
         <img src={p.img} alt={p.title} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", transition: "transform 0.4s", transform: hov ? "scale(1.04)" : "scale(1)" }}
           onError={e => e.target.style.display = "none"} />
+        {hov && (
+          <div style={{
+            position: "absolute", inset: 0, background: "rgba(108,92,231,0.18)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            backdropFilter: "blur(1px)",
+          }}>
+            <div style={{ background: "rgba(0,0,0,0.55)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: "10px", padding: "0.5rem 1.1rem", fontSize: "0.85rem", color: "#fff", fontFamily: "'Cabinet Grotesk', sans-serif", fontWeight: 600 }}>
+              🔍 View Image
+            </div>
+          </div>
+        )}
       </div>
       <div style={{ padding: "1.5rem" }}>
         <div style={{ fontSize: "0.7rem", color: COLORS.accent, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: "0.35rem" }}>{p.num}</div>
@@ -361,15 +439,26 @@ function ProjectCard({ p }) {
   );
 }
 
-// ── CERTS ──
-function Certificates() {
+function Projects({ DATA }) {
+  const [lightbox, setLightbox] = useState(null); // index
+  const items = DATA.projects;
   return (
-    <section id="certificates" style={{ padding: "6rem 5rem", background: COLORS.bg, fontFamily: "'Cabinet Grotesk', sans-serif" }}>
+    <section id="projects" style={{ padding: "6rem 5rem", background: COLORS.bg2, fontFamily: "'Cabinet Grotesk', sans-serif" }}>
+      {lightbox !== null && (
+        <Lightbox
+          item={items[lightbox]} type="project"
+          onClose={() => setLightbox(null)}
+          onPrev={() => setLightbox(i => i - 1)}
+          onNext={() => setLightbox(i => i + 1)}
+          hasPrev={lightbox > 0}
+          hasNext={lightbox < items.length - 1}
+        />
+      )}
       <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-        <SectionHeader tag="Credentials" title="Certificates" sub="Professional certifications validating my expertise across cloud, data science, and full stack development." />
+        <SectionHeader tag="What I've Built" title="Latest Projects" sub="Projects that showcase my ability to design and build complete, polished web applications." />
         <Reveal delay={300}>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(200px,1fr))", gap: "1rem" }}>
-            {DATA.certs.map((c, i) => <CertCard key={i} c={c} />)}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
+            {items.map((p, i) => <ProjectCard key={i} p={p} onClick={() => setLightbox(i)} />)}
           </div>
         </Reveal>
       </div>
@@ -377,17 +466,34 @@ function Certificates() {
   );
 }
 
-function CertCard({ c }) {
+// ── CERTIFICATES ──
+function CertCard({ c, onClick }) {
   const [hov, setHov] = useState(false);
   return (
-    <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} style={{
-      background: COLORS.card, border: `0.5px solid ${hov ? COLORS.border2 : COLORS.border}`,
-      borderRadius: "14px", overflow: "hidden", transition: "all 0.25s",
-      transform: hov ? "translateY(-3px)" : "none",
-    }}>
-      <div style={{ height: 130, overflow: "hidden", background: COLORS.card2 }}>
-        <img src={c.img} alt={c.name} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+    <div
+      onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+      onClick={onClick}
+      style={{
+        background: COLORS.card, border: `0.5px solid ${hov ? COLORS.border2 : COLORS.border}`,
+        borderRadius: "14px", overflow: "hidden", transition: "all 0.25s",
+        transform: hov ? "translateY(-3px)" : "none",
+        cursor: "pointer",
+      }}
+    >
+      <div style={{ height: 130, overflow: "hidden", background: COLORS.card2, position: "relative" }}>
+        <img src={c.img} alt={c.name} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", transition: "transform 0.3s", transform: hov ? "scale(1.05)" : "scale(1)" }}
           onError={e => e.target.style.display = "none"} />
+        {hov && (
+          <div style={{
+            position: "absolute", inset: 0, background: "rgba(0,217,163,0.14)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            backdropFilter: "blur(1px)",
+          }}>
+            <div style={{ background: "rgba(0,0,0,0.55)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: "8px", padding: "0.4rem 0.9rem", fontSize: "0.8rem", color: "#fff", fontFamily: "'Cabinet Grotesk', sans-serif", fontWeight: 600 }}>
+              🔍 View
+            </div>
+          </div>
+        )}
       </div>
       <div style={{ padding: "0.85rem 1rem" }}>
         <div style={{ fontSize: "0.87rem", fontWeight: 600 }}>{c.name}</div>
@@ -397,8 +503,35 @@ function CertCard({ c }) {
   );
 }
 
+function Certificates({ DATA }) {
+  const [lightbox, setLightbox] = useState(null);
+  const items = DATA.certs;
+  return (
+    <section id="certificates" style={{ padding: "6rem 5rem", background: COLORS.bg, fontFamily: "'Cabinet Grotesk', sans-serif" }}>
+      {lightbox !== null && (
+        <Lightbox
+          item={items[lightbox]} type="cert"
+          onClose={() => setLightbox(null)}
+          onPrev={() => setLightbox(i => i - 1)}
+          onNext={() => setLightbox(i => i + 1)}
+          hasPrev={lightbox > 0}
+          hasNext={lightbox < items.length - 1}
+        />
+      )}
+      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+        <SectionHeader tag="Credentials" title="Certificates" sub="Professional certifications validating my expertise across cloud, data science, and full stack development." />
+        <Reveal delay={300}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(200px,1fr))", gap: "1rem" }}>
+            {items.map((c, i) => <CertCard key={i} c={c} onClick={() => setLightbox(i)} />)}
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
 // ── EDUCATION ──
-function Education() {
+function Education({ DATA }) {
   return (
     <section id="education" style={{ padding: "6rem 5rem", background: COLORS.bg2, fontFamily: "'Cabinet Grotesk', sans-serif" }}>
       <div style={{ maxWidth: 1200, margin: "0 auto" }}>
@@ -422,7 +555,7 @@ function Education() {
 }
 
 // ── ABOUT ──
-function About() {
+function About({ DATA }) {
   const ab = DATA.about;
   const h = DATA.hero;
   const details = [
@@ -462,25 +595,23 @@ function About() {
 }
 
 // ── CONTACT ──
-function Contact() {
+function Contact({ DATA }) {
   const co = DATA.contact;
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
   const [status, setStatus] = useState("");
-
   const items = [
     { icon: "📞", label: "Phone", val: co.phone },
     { icon: "✉️", label: "Email", val: co.email },
     { icon: "📍", label: "Location", val: co.address },
     { icon: "💼", label: "Status", val: co.status, green: true },
   ];
-
   const handleSend = () => {
     if (!form.name || !form.email || !form.message) { setStatus("Please fill in Name, Email and Message."); return; }
     setStatus("Opening mail client...");
     window.location.href = `mailto:${DATA.hero.email}?subject=${encodeURIComponent(form.subject || "(No subject)")}&body=${encodeURIComponent(`From: ${form.name} (${form.email})\n\n${form.message}`)}`;
     setTimeout(() => setStatus(""), 3000);
   };
-
+  const iStyle = { width: "100%", background: COLORS.bg2, border: `0.5px solid ${COLORS.border2}`, borderRadius: "8px", padding: "0.72rem 1rem", color: COLORS.text, fontFamily: "'Cabinet Grotesk', sans-serif", fontSize: "0.92rem", outline: "none", boxSizing: "border-box" };
   return (
     <section id="contact" style={{ padding: "6rem 5rem", background: COLORS.bg2, fontFamily: "'Cabinet Grotesk', sans-serif" }}>
       <div style={{ maxWidth: 1200, margin: "0 auto" }}>
@@ -504,12 +635,12 @@ function Contact() {
               {[["Your Name", "name", "text", "e.g. Ravi Kumar"], ["Email", "email", "email", "ravi@example.com"], ["Subject", "subject", "text", "Project / Opportunity / Collaboration"]].map(([label, key, type, ph]) => (
                 <div key={key}>
                   <label style={{ display: "block", fontSize: "0.75rem", color: COLORS.muted, marginBottom: "0.4rem", textTransform: "uppercase", letterSpacing: "0.06em" }}>{label}</label>
-                  <input type={type} placeholder={ph} value={form[key]} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))} style={{ width: "100%", background: COLORS.bg2, border: `0.5px solid ${COLORS.border2}`, borderRadius: "8px", padding: "0.72rem 1rem", color: COLORS.text, fontFamily: "'Cabinet Grotesk', sans-serif", fontSize: "0.92rem", outline: "none", boxSizing: "border-box" }} />
+                  <input type={type} placeholder={ph} value={form[key]} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))} style={iStyle} />
                 </div>
               ))}
               <div>
                 <label style={{ display: "block", fontSize: "0.75rem", color: COLORS.muted, marginBottom: "0.4rem", textTransform: "uppercase", letterSpacing: "0.06em" }}>Message</label>
-                <textarea placeholder="Tell me about your project or opportunity..." value={form.message} onChange={e => setForm(f => ({ ...f, message: e.target.value }))} rows={5} style={{ width: "100%", background: COLORS.bg2, border: `0.5px solid ${COLORS.border2}`, borderRadius: "8px", padding: "0.72rem 1rem", color: COLORS.text, fontFamily: "'Cabinet Grotesk', sans-serif", fontSize: "0.92rem", outline: "none", resize: "vertical", boxSizing: "border-box" }} />
+                <textarea placeholder="Tell me about your project or opportunity..." value={form.message} onChange={e => setForm(f => ({ ...f, message: e.target.value }))} rows={5} style={{ ...iStyle, resize: "vertical" }} />
               </div>
               {status && <div style={{ fontSize: "0.85rem", color: COLORS.teal }}>{status}</div>}
               <button onClick={handleSend} style={{ background: COLORS.accent, color: "#fff", border: "none", padding: "0.9rem", borderRadius: "8px", fontSize: "0.95rem", fontWeight: 600, cursor: "pointer", fontFamily: "'Cabinet Grotesk', sans-serif", transition: "background 0.2s" }}
@@ -526,7 +657,7 @@ function Contact() {
 }
 
 // ── FOOTER ──
-function Footer() {
+function Footer({ DATA }) {
   const h = DATA.hero;
   return (
     <footer style={{ background: COLORS.bg, borderTop: `0.5px solid ${COLORS.border}`, padding: "2rem 5rem", display: "flex", alignItems: "center", justifyContent: "space-between", fontFamily: "'Cabinet Grotesk', sans-serif", flexWrap: "wrap", gap: "1rem" }}>
@@ -544,8 +675,8 @@ function Footer() {
   );
 }
 
-// ── APP ──
-export default function App() {
+// ── PORTFOLIO ──
+function Portfolio({ DATA, onAdminClick }) {
   return (
     <div style={{ background: COLORS.bg, color: COLORS.text, minHeight: "100vh" }}>
       <style>{`
@@ -556,21 +687,55 @@ export default function App() {
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: #07070d; }
         ::-webkit-scrollbar-thumb { background: #6c5ce7; border-radius: 2px; }
-        @keyframes breathe {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.4; transform: scale(0.75); }
-        }
+        @keyframes breathe { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.75)} }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:none} }
       `}</style>
-      <Nav />
-      <Hero />
-      <Skills />
-      <Experience />
-      <Projects />
-      <Certificates />
-      <Education />
-      <About />
-      <Contact />
-      <Footer />
+      <Nav onAdminClick={onAdminClick} />
+      <Hero DATA={DATA} />
+      <Skills DATA={DATA} />
+      <Experience DATA={DATA} />
+      <Projects DATA={DATA} />
+      <Certificates DATA={DATA} />
+      <Education DATA={DATA} />
+      <About DATA={DATA} />
+      <Contact DATA={DATA} />
+      <Footer DATA={DATA} />
     </div>
   );
+}
+
+// ── ROOT APP ──
+export default function App() {
+  const [view, setView] = useState("portfolio"); // "portfolio" | "login" | "admin"
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [data, setData] = useState(() => loadData());
+
+  const handleAdminClick = () => {
+    if (isLoggedIn) setView("admin");
+    else setView("login");
+  };
+
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+    setView("admin");
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setView("portfolio");
+  };
+
+  const handleDataUpdate = (newData) => {
+    setData(newData);
+  };
+
+  if (view === "login") return <AdminLogin onLogin={handleLogin} />;
+  if (view === "admin") return (
+    <AdminDashboard
+      data={data}
+      onUpdate={handleDataUpdate}
+      onLogout={handleLogout}
+    />
+  );
+  return <Portfolio DATA={data} onAdminClick={handleAdminClick} />;
 }
