@@ -1,0 +1,67 @@
+/* Global Reset & Base Styles */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  background-color: #07070d;
+  color: #edeaf8;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: #07070d;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #6c5ce7;
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a29bf5;
+}
+
+/* Remove default button styles */
+button {
+  cursor: pointer;
+}
+
+/* Remove default link underline */
+a {
+  text-decoration: none;
+}
+
+/* Breathe animation (used by availability dot) */
+@keyframes breathe {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.75);
+  }
+}
+
+/* Fade-in animation for images */
+img {
+  max-width: 100%;
+  height: auto;
+}
