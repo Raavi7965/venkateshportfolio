@@ -61,7 +61,7 @@ const MailIcon = () => (
 );
 
 // ── NAV ──
-function Nav({ onAdminClick }) {
+function Nav({ onAdminClick, email = "" }) {
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 20);
@@ -108,7 +108,7 @@ function Nav({ onAdminClick }) {
           onMouseLeave={e => { e.target.style.borderColor = COLORS.border2; e.target.style.color = COLORS.muted2; }}>
           ⚙ Admin
         </button>
-        <a href={`mailto:${""}`} style={{
+        <a href={`mailto:${email}`} style={{
           background: COLORS.accent, color: "#fff", padding: "0.45rem 1.2rem",
           borderRadius: "6px", fontSize: "0.85rem", fontWeight: 500, textDecoration: "none",
           fontFamily: "'Cabinet Grotesk', sans-serif", transition: "all 0.2s",
@@ -690,7 +690,7 @@ function Portfolio({ DATA, onAdminClick }) {
         @keyframes breathe { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.75)} }
         @keyframes fadeIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:none} }
       `}</style>
-      <Nav onAdminClick={onAdminClick} />
+      <Nav onAdminClick={onAdminClick} email={DATA.hero.email} />
       <Hero DATA={DATA} />
       <Skills DATA={DATA} />
       <Experience DATA={DATA} />
