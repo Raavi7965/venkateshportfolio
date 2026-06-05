@@ -78,7 +78,7 @@ venkatesh-portfolio/
 ## 📬 Contact
 
 **Venkatesh Raavi**
-- Email: venkiravi796@gmail.com
+- Email: venkatesh.raavi57@gmail.com
 - GitHub: [Raavi7965](https://github.com/Raavi7965)
 - LinkedIn: [raavivenkatesh](https://www.linkedin.com/in/raavivenkatesh/)
 
