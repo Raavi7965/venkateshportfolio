@@ -88,7 +88,7 @@ export const DEFAULT_DATA = {
 };
 
 const STORAGE_KEY = "vr_portfolio_data";
-const API_URL = import.meta.env.VITE_API_URL || "https://venkateshportfolioserver.onrender.com";
+const API_URL = import.meta.env.VITE_API_URL || "";
 
 function isObject(value) {
   return value && typeof value === "object" && !Array.isArray(value);
