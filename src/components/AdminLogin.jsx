@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const C = {
   bg: "#07070d", bg2: "#0e0e18", bg3: "#141420",
@@ -9,6 +9,7 @@ const C = {
 };
 
 const CREDENTIALS = { username: "venkatesh", password: "vr@admin2003" };
+const STORAGE_KEY = "vr_admin_logged_in";
 
 export default function AdminLogin({ onLogin }) {
   const [user, setUser] = useState("");
@@ -17,12 +18,21 @@ export default function AdminLogin({ onLogin }) {
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.localStorage.getItem(STORAGE_KEY) === "1") {
+      onLogin();
+    }
+  }, [onLogin]);
+
   const handle = () => {
     setErr("");
     if (!user || !pass) { setErr("Please enter both username and password."); return; }
     setLoading(true);
     setTimeout(() => {
       if (user === CREDENTIALS.username && pass === CREDENTIALS.password) {
+        if (typeof window !== "undefined") {
+          window.localStorage.setItem(STORAGE_KEY, "1");
+        }
         onLogin();
       } else {
         setErr("Invalid credentials. Please try again.");

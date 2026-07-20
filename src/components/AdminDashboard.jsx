@@ -543,7 +543,7 @@ export default function AdminDashboard({ data, onUpdate, onLogout }) {
         padding: "0.9rem 1.8rem", display: "flex", alignItems: "center", justifyContent: "space-between",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.9rem" }}>
-          <div style={{ width: 34, height: 34, borderRadius: "9px", background: `linear-gradient(135deg,${C.accent},${C.accent2})`, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Syne',sans-serif", fontSize: "0.85rem", fontWeight: 800, color: "#fff" }}>VR</div>
+          <div style={{ width: 34, height: 34, borderRadius: "9px", background: `linear-gradient(135deg,${C.accent},${C.accent2})`, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Syne',sans-serif", fontSize: "0.85rem", fontWeight: 800, color: "#eb1717" }}>VR</div>
           <div>
             <p style={{ fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: "0.95rem" }}>Portfolio Admin</p>
             <p style={{ fontSize: "0.72rem", color: C.muted }}>Manage your portfolio content</p>

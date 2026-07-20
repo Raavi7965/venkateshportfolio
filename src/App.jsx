@@ -706,8 +706,18 @@ function Portfolio({ DATA, onAdminClick }) {
 
 // ── ROOT APP ──
 export default function App() {
-  const [view, setView] = useState("portfolio"); // "portfolio" | "login" | "admin"
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [view, setView] = useState(() => {
+    if (typeof window !== "undefined" && window.localStorage.getItem("vr_admin_logged_in") === "1") {
+      return "admin";
+    }
+    return "portfolio";
+  });
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    if (typeof window !== "undefined") {
+      return window.localStorage.getItem("vr_admin_logged_in") === "1";
+    }
+    return false;
+  });
   const [data, setData] = useState(() => loadData());
 
   const handleAdminClick = () => {
@@ -721,6 +731,9 @@ export default function App() {
   };
 
   const handleLogout = () => {
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem("vr_admin_logged_in");
+    }
     setIsLoggedIn(false);
     setView("portfolio");
   };
