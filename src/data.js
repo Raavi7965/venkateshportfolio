@@ -1,4 +1,4 @@
-// Central data store — admin panel reads/writes this via localStorage
+// Central data store — admin panel reads/writes this via localStorage and API fallback
 export const DEFAULT_DATA = {
   hero: {
     name: "Venkatesh Raavi",
@@ -88,17 +88,69 @@ export const DEFAULT_DATA = {
 };
 
 const STORAGE_KEY = "vr_portfolio_data";
+const API_URL = import.meta.env.VITE_API_URL || "https://venkateshportfolioserver.onrender.com";
 
-export function loadData() {
+function isObject(value) {
+  return value && typeof value === "object" && !Array.isArray(value);
+}
+
+function mergeWithDefaults(saved) {
+  if (!isObject(saved)) return JSON.parse(JSON.stringify(DEFAULT_DATA));
+  return {
+    ...JSON.parse(JSON.stringify(DEFAULT_DATA)),
+    ...saved,
+    hero: { ...JSON.parse(JSON.stringify(DEFAULT_DATA.hero)), ...(saved.hero || {}) },
+    about: { ...JSON.parse(JSON.stringify(DEFAULT_DATA.about)), ...(saved.about || {}) },
+    contact: { ...JSON.parse(JSON.stringify(DEFAULT_DATA.contact)), ...(saved.contact || {}) },
+  };
+}
+
+export async function loadData() {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) return JSON.parse(saved);
+    if (saved) return mergeWithDefaults(JSON.parse(saved));
   } catch (_) {}
+
+  const endpoint = API_URL ? `${API_URL}/api/portfolio` : "/api/portfolio";
+  try {
+    const response = await fetch(endpoint);
+    if (response.ok) {
+      const payload = await response.json();
+      if (payload && payload.ok === false) {
+        return JSON.parse(JSON.stringify(DEFAULT_DATA));
+      }
+      if (payload && payload.data) {
+        return mergeWithDefaults(payload.data);
+      }
+      if (payload && !payload.ok) {
+        return mergeWithDefaults(payload);
+      }
+    }
+  } catch (_) {}
+
   return JSON.parse(JSON.stringify(DEFAULT_DATA));
 }
 
-export function saveData(data) {
+export async function saveData(data) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+
+  const endpoint = API_URL ? `${API_URL}/api/portfolio` : "/api/portfolio";
+  try {
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Server returned ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Failed to save portfolio data to server", error);
+    return null;
+  }
 }
 
 export function resetData() {

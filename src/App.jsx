@@ -718,7 +718,30 @@ export default function App() {
     }
     return false;
   });
-  const [data, setData] = useState(() => loadData());
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    let mounted = true;
+    const refreshData = async () => {
+      const loaded = await loadData();
+      if (mounted) setData(loaded);
+    };
+
+    refreshData();
+
+    if (typeof window !== "undefined") {
+      const onStorage = () => refreshData();
+      window.addEventListener("storage", onStorage);
+      return () => {
+        mounted = false;
+        window.removeEventListener("storage", onStorage);
+      };
+    }
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const handleAdminClick = () => {
     if (isLoggedIn) setView("admin");
@@ -741,6 +764,10 @@ export default function App() {
   const handleDataUpdate = (newData) => {
     setData(newData);
   };
+
+  if (!data) {
+    return <div style={{ minHeight: "100vh", background: COLORS.bg, color: COLORS.text, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Cabinet Grotesk', sans-serif" }}>Loading portfolio…</div>;
+  }
 
   if (view === "login") return <AdminLogin onLogin={handleLogin} />;
   if (view === "admin") return (

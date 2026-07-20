@@ -493,10 +493,14 @@ export default function AdminDashboard({ data, onUpdate, onLogout }) {
   const [localData, setLocalData] = useState(data);
   const [toastMsg, showToast] = useToast();
 
-  const handleSave = () => {
-    saveData(localData);
-    onUpdate(localData);
-    showToast("✓ Changes saved!");
+  const handleSave = async () => {
+    try {
+      await saveData(localData);
+      onUpdate(localData);
+      showToast("✓ Changes saved to the server!");
+    } catch {
+      showToast("⚠ Save failed. Please try again.");
+    }
   };
 
   const handleReset = () => {
@@ -550,7 +554,12 @@ export default function AdminDashboard({ data, onUpdate, onLogout }) {
           </div>
         </div>
         <div style={{ display: "flex", gap: "0.6rem", alignItems: "center" }}>
-          <button onClick={() => window.open("/", "_blank")} style={{ background: "none", border: `0.5px solid ${C.border2}`, color: C.muted2, padding: "0.38rem 0.9rem", borderRadius: "6px", fontSize: "0.78rem", cursor: "pointer", fontFamily: "'Cabinet Grotesk',sans-serif" }}>
+          <button
+            onClick={() => {
+              const previewUrl = `${window.location.origin}/?preview=1`;
+              window.open(previewUrl, "_blank", "noopener,noreferrer");
+            }}
+            style={{ background: "none", border: `0.5px solid ${C.border2}`, color: C.muted2, padding: "0.38rem 0.9rem", borderRadius: "6px", fontSize: "0.78rem", cursor: "pointer", fontFamily: "'Cabinet Grotesk',sans-serif" }}>
             👁 Preview
           </button>
           <button onClick={handleSave} style={{ background: C.teal, color: C.bg, padding: "0.38rem 0.9rem", border: "none", borderRadius: "6px", fontSize: "0.78rem", cursor: "pointer", fontFamily: "'Cabinet Grotesk',sans-serif", fontWeight: 700 }}>
